@@ -1,0 +1,38 @@
+services:
+  pg_a:
+    image: postgres:16
+    container_name: proyecto2
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${DB_CONTRASENIA}
+      POSTGRES_USER: admin
+    volumes:
+      - pgdata_a:/var/lib/postgresql/data
+      - ./compartida:/compartida:Z
+    ports:
+      - "5433:5432"
+    networks:
+      - db_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_proyecto2
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_CONTRASENIA}
+    ports:
+      - "8081:80"
+    depends_on:
+      - pg_a
+    volumes:
+      - ./compartida:/compartida:Z
+    networks:
+      - db_network
+
+networks:
+  db_network:
+    driver: bridge
+
+volumes:
+  pgdata_a:
