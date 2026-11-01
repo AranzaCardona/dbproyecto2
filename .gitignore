@@ -1,0 +1,13 @@
+*.class
+target/
+bin/
+out/
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+# Credenciales: nunca subas contraseñas de la base de datos
+*.properties
+.env
