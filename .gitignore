@@ -8,6 +8,5 @@ out/
 .classpath
 .project
 .settings/
-# Credenciales: nunca subas contraseñas de la base de datos
 *.properties
 .env

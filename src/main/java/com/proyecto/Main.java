@@ -1,5 +1,6 @@
 package com.proyecto;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -21,21 +22,37 @@ public class Main {
                 ORDER BY p.nombre;
                 """;
 
-        try (Connection conn = DriverManager.getConnection(url, usuario, contrasena);
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        String insertar = """
+                INSERT INTO productos (sku, nombre, precio, existencias, id_categoria)
+                VALUES (?, ?, ?, ?, ?);
+                """;
+
+        try (Connection conn = DriverManager.getConnection(url, usuario, contrasena)) {
+            try (PreparedStatement psInsertar = conn.prepareStatement(insertar)) {
+                psInsertar.setString(1, "SKU123");
+                psInsertar.setString(2, "Leche Entera");
+                psInsertar.setBigDecimal(3, new BigDecimal("19.99"));
+                psInsertar.setInt(4, 100);
+                psInsertar.setInt(5, 1);
+                int filasInsertadas = psInsertar.executeUpdate();
+                System.out.printf("Filas insertadas: %d%n", filasInsertadas);
+            }
+
             System.out.println("Conexión exitosa. Productos:");
-            while (rs.next()) {
-                System.out.printf("%d | %s | %s | $%s | existencias: %d | categoría: %s%n",
-                        rs.getInt("id_producto"),
-                        rs.getString("sku"),
-                        rs.getString("nombre"),
-                        rs.getBigDecimal("precio"),
-                        rs.getInt("existencias"),
-                        rs.getString("nombre_categoria"));
+            try (PreparedStatement ps = conn.prepareStatement(sql);
+                 ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    System.out.printf("%d | %s | %s | $%s | existencias: %d | categoría: %s%n",
+                            rs.getInt("id_producto"),
+                            rs.getString("sku"),
+                            rs.getString("nombre"),
+                            rs.getBigDecimal("precio"),
+                            rs.getInt("existencias"),
+                            rs.getString("nombre_categoria"));
+                }
             }
         } catch (SQLException e) {
-            System.out.println("Error al conectar o consultar los productos");
+            System.out.println("Error al conectar, insertar o consultar los productos");
             e.printStackTrace();
         }
     }
