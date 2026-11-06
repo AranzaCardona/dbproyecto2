@@ -15,15 +15,26 @@ public class Consola {
     /** Pide texto no vacío y con longitud máxima (útil para columnas varchar). */
     public String leerTexto(String mensaje, int maxLongitud) {
         while (true) {
+            String valor = leerTextoOpcional(mensaje, maxLongitud);
+            if (valor != null) {
+                return valor;
+            }
+            System.out.println("El valor no puede estar vacío.");
+        }
+    }
+
+    /** Pide texto con longitud máxima; si el usuario solo presiona Enter devuelve null. */
+    public String leerTextoOpcional(String mensaje, int maxLongitud) {
+        while (true) {
             System.out.print(mensaje);
             String valor = teclado.nextLine().trim();
             if (valor.isEmpty()) {
-                System.out.println("El valor no puede estar vacío.");
-            } else if (valor.length() > maxLongitud) {
-                System.out.println("Máximo " + maxLongitud + " caracteres.");
-            } else {
+                return null;
+            }
+            if (valor.length() <= maxLongitud) {
                 return valor;
             }
+            System.out.println("Máximo " + maxLongitud + " caracteres.");
         }
     }
 
@@ -48,6 +59,17 @@ public class Consola {
         }
     }
 
+    /** Para cantidades de venta/compra: el esquema exige cantidad > 0. */
+    public int leerEnteroPositivo(String mensaje) {
+        while (true) {
+            int valor = leerEntero(mensaje);
+            if (valor > 0) {
+                return valor;
+            }
+            System.out.println("El valor debe ser mayor que cero.");
+        }
+    }
+
     /** Pide un número compatible con numeric(10,2): máximo 8 enteros y 2 decimales. */
     public BigDecimal leerDecimalNoNegativo(String mensaje) {
         while (true) {
@@ -66,7 +88,4 @@ public class Consola {
             }
         }
     }
-
-    // TODO: leerTextoOpcional(...) para correo/teléfono de clientes y proveedores,
-    //       que pueden quedar vacíos (se guardarían como NULL).
 }

@@ -1,5 +1,6 @@
 package com.proyecto;
 
+import com.proyecto.dao.CategoriaDao;
 import com.proyecto.dao.ClienteDao;
 import com.proyecto.dao.CompraDao;
 import com.proyecto.dao.ProductoDao;
@@ -27,11 +28,19 @@ public class Main {
             // Un solo Scanner (dentro de Consola) compartido por todos los menús.
             Consola consola = new Consola();
 
-            MenuProductos menuProductos = new MenuProductos(consola, new ProductoDao(conn));
+            // Los DAO comparten la misma conexión.
+            ProductoDao productoDao = new ProductoDao(conn);
+            CategoriaDao categoriaDao = new CategoriaDao(conn);
+            ClienteDao clienteDao = new ClienteDao(conn);
+            VentaDao ventaDao = new VentaDao(conn);
+            ProveedorDao proveedorDao = new ProveedorDao(conn);
+            CompraDao compraDao = new CompraDao(conn);
+
+            MenuProductos menuProductos = new MenuProductos(consola, productoDao, categoriaDao);
             MenuClientesVentas menuClientesVentas =
-                    new MenuClientesVentas(consola, new ClienteDao(conn), new VentaDao(conn));
+                    new MenuClientesVentas(consola, clienteDao, ventaDao, productoDao);
             MenuProveedoresCompras menuProveedoresCompras =
-                    new MenuProveedoresCompras(consola, new ProveedorDao(conn), new CompraDao(conn));
+                    new MenuProveedoresCompras(consola, proveedorDao, compraDao, productoDao);
 
             new MenuPrincipal(consola, menuProductos, menuClientesVentas, menuProveedoresCompras)
                     .ejecutar();
